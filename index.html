@@ -27,6 +27,7 @@
             margin: 0 auto;
             padding: 2rem;
             flex: 1;
+            position: relative;
         }
 
         header {
@@ -44,7 +45,7 @@
         }
 
         h1:hover::after {
-            content: "Índice não aprovado pelo CRN – mas aprovado pelo povo da Feira da Matriz.";
+            content: "Índice não aprovado pelo CRN — mas aprovado pelo povo da Avenida Ayrton.";
             position: absolute;
             bottom: -30px;
             left: 50%;
@@ -70,6 +71,7 @@
             padding: 2rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border: 1px solid #C87A3E;
+            position: relative;
         }
 
         .input-group {
@@ -208,6 +210,60 @@
             background: #4a6b46;
         }
 
+        .ods-buttons {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0 1rem;
+        }
+
+        .ods-btn {
+            background: #5E8C5A;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .ods-btn:hover {
+            background: #4a6b46;
+            transform: scale(1.1);
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 50px;
+            background: #C87A3E;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            max-width: 250px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .tooltip.ods3 {
+            right: 0;
+        }
+
+        .tooltip.ods12 {
+            left: 0;
+        }
+
         footer {
             text-align: center;
             padding: 2rem;
@@ -236,6 +292,19 @@
             
             h1 {
                 font-size: 1.5rem;
+            }
+
+            .ods-buttons {
+                bottom: -80px;
+                flex-direction: column;
+                align-items: center;
+                bottom: -90px;
+            }
+
+            .tooltip.ods3, .tooltip.ods12 {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
             }
         }
     </style>
@@ -280,15 +349,60 @@
                         <button class="btn-gift" onclick="showGift()">Quero meu brinde</button>
                     </div>
                 </div>
+
+                <!-- ODS Buttons -->
+                <div class="ods-buttons">
+                    <button class="ods-btn" onclick="toggleTooltip('ods3')" aria-label="Informações sobre ODS 3">🏥</button>
+                    <button class="ods-btn" onclick="toggleTooltip('ods12')" aria-label="Informações sobre ODS 12">♻️</button>
+                </div>
+
+                <!-- Tooltips -->
+                <div id="tooltip-ods3" class="tooltip ods3">
+                    ODS 3 - Saúde e Bem-estar: Meta 3.4 - Reduzir mortalidade prematura por doenças não transmissíveis, promovendo saúde e bem-estar para todos.
+                </div>
+                <div id="tooltip-ods12" class="tooltip ods12">
+                    ODS 12 - Consumo e Produção Responsáveis: Meta 12.8 - Garantir que as pessoas tenham informação sobre desenvolvimento sustentável e estilos de vida saudáveis.
+                </div>
             </div>
         </main>
     </div>
 
     <footer>
-        <p>Esta calculadora foi desenvolvida para uma atividade extensionista da Faculdade Anhanguera – Anápolis. Apoiamos a Agenda 2030 da ONU.</p>
+        <p>Esta calculadora foi desenvolvida para uma atividade extensionista da Faculdade Anhanguera de Anápolis (GO). Apoiamos a Agenda 2030 da ONU.</p>
     </footer>
 
     <script>
+        // Hide tooltips initially
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('tooltip-ods3').style.display = 'none';
+            document.getElementById('tooltip-ods12').style.display = 'none';
+        });
+
+        // Toggle tooltip visibility
+        function toggleTooltip(odsId) {
+            const tooltip = document.getElementById(`tooltip-${odsId}`);
+            const otherOdsId = odsId === 'ods3' ? 'ods12' : 'ods3';
+            const otherTooltip = document.getElementById(`tooltip-${otherOdsId}`);
+
+            // Hide other tooltip
+            otherTooltip.style.display = 'none';
+
+            // Toggle current tooltip
+            if (tooltip.style.display === 'block') {
+                tooltip.style.display = 'none';
+            } else {
+                tooltip.style.display = 'block';
+            }
+        }
+
+        // Close tooltips when clicking elsewhere
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.ods-btn') && !event.target.closest('.tooltip')) {
+                document.getElementById('tooltip-ods3').style.display = 'none';
+                document.getElementById('tooltip-ods12').style.display = 'none';
+            }
+        });
+
         // Load saved values from localStorage
         function loadSavedValues() {
             const savedHeight = localStorage.getItem('iegh_height');
@@ -350,31 +464,31 @@
             if (ieg < 18.5) {
                 categoryData = {
                     emoji: '🍗',
-                    name: 'Frango de padaria – só o osso',
+                    name: 'Frango de padaria — só o osso',
                     suggestion: 'Bora pedir um empadão duplo? Aproveita que ossada não empata.'
                 };
             } else if (ieg >= 18.5 && ieg < 25) {
                 categoryData = {
                     emoji: '🧀🥤',
-                    name: 'Empadão raiz – duas fatias e um guaraná',
+                    name: 'Empadão raiz — duas fatias e um guaraná',
                     suggestion: 'Continue assim! Divida uma fatia com um amigo (capital da amizade ❤️).'
                 };
             } else if (ieg >= 25 && ieg < 30) {
                 categoryData = {
                     emoji: '🤠',
-                    name: 'Peão de rodeio – cinto no último furo',
+                    name: 'Peão de rodeio — cinto no último furo',
                     suggestion: 'Troque o refrigerante por água de coco. Seu cinto agradece.'
                 };
             } else if (ieg >= 30 && ieg < 35) {
                 categoryData = {
                     emoji: '🥟',
-                    name: 'Pastel de feira – estufou a camisa',
+                    name: 'Pastel de feira — estufou a camisa',
                     suggestion: 'Que tal um pastel assado em vez de frito? Sua camisa vai folgar.'
                 };
             } else if (ieg >= 35 && ieg < 40) {
                 categoryData = {
                     emoji: '🚗⛰️',
-                    name: 'Morro do Cruzeiro de carro – nem tenta subir andando',
+                    name: 'Morro do Cruzeiro de carro — nem tenta subir andando',
                     suggestion: 'Comece caminhando 10 min por dia. Em três semanas você sobe até o cruzeiro.'
                 };
             } else {
