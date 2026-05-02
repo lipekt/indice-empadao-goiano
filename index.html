@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Índice de Empadão Goiano (IEG)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDF8ED;
+            color: #2C2A24;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(1.75rem, 4vw, 2rem);
+            color: #5E8C5A;
+            margin-bottom: 0.5rem;
+            cursor: help;
+        }
+
+        h1:hover::after {
+            content: "Índice não aprovado pelo CRN – mas aprovado pelo povo da Feira da Matriz.";
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #C87A3E;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        .subtitle {
+            color: #7A6A5C;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #C87A3E;
+        }
+
+        .input-group {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-row {
+            display: grid;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .input-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2C2A24;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #C87A3E;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #5E8C5A;
+            box-shadow: 0 0 0 3px rgba(94, 140, 90, 0.1);
+        }
+
+        input:invalid {
+            border-color: #D9534F;
+        }
+
+        .btn-calculate {
+            background: #C87A3E;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto 1.5rem;
+            width: 100%;
+        }
+
+        @media (min-width: 480px) {
+            .btn-calculate {
+                width: auto;
+            }
+        }
+
+        .btn-calculate:hover {
+            background: #B05E2A;
+            transform: translateY(-1px);
+        }
+
+        .result-container {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #FDF8ED;
+            border-radius: 8px;
+            border-left: 4px solid #C87A3E;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #5E8C5A;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .category {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .category-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2C2A24;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-emoji {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .suggestion {
+            color: #7A6A5C;
+            font-style: italic;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            color: #D9534F;
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .btn-gift {
+            background: #5E8C5A;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gift:hover {
+            background: #4a6b46;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: auto;
+            color: #7A6A5C;
+            font-size: 0.85rem;
+            border-top: 1px solid #C87A3E;
+            background: #FDF8ED;
+        }
+
+        .help-text {
+            color: #7A6A5C;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Índice de Empadão Goiano (IEG)</h1>
+            <p class="subtitle">Digite sua altura e peso para calcular seu IEG</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="input-group">
+                    <div class="input-row">
+                        <div>
+                            <label for="height">Altura (cm)</label>
+                            <input type="number" id="height" placeholder="Ex: 170" min="50" max="280">
+                            <p class="help-text">Digite sua altura em centímetros</p>
+                        </div>
+                        <div>
+                            <label for="weight">Peso (kg)</label>
+                            <input type="number" id="weight" placeholder="Ex: 70" min="5" max="500">
+                            <p class="help-text">Digite seu peso em quilogramas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-calculate" onclick="calculateIEG()">Calcular IEG</button>
+                
+                <div id="error-message" class="error-message"></div>
+                
+                <div id="result-container" class="result-container">
+                    <div class="result-value" id="result-value">???</div>
+                    <div class="category">
+                        <span class="category-emoji" id="category-emoji"></span>
+                        <div class="category-name" id="category-name"></div>
+                    </div>
+                    <div class="suggestion" id="suggestion"></div>
+                    
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <button class="btn-gift" onclick="showGift()">Quero meu brinde</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>Esta calculadora foi desenvolvida para uma atividade extensionista da Faculdade Anhanguera – Anápolis. Apoiamos a Agenda 2030 da ONU.</p>
+    </footer>
+
+    <script>
+        // Load saved values from localStorage
+        function loadSavedValues() {
+            const savedHeight = localStorage.getItem('iegh_height');
+            const savedWeight = localStorage.getItem('iegh_weight');
+            
+            if (savedHeight) document.getElementById('height').value = savedHeight;
+            if (savedWeight) document.getElementById('weight').value = savedWeight;
+        }
+
+        // Save values to localStorage
+        function saveValues() {
+            const height = document.getElementById('height').value;
+            const weight = document.getElementById('weight').value;
+            
+            if (height) localStorage.setItem('iegh_height', height);
+            if (weight) localStorage.setItem('iegh_weight', weight);
+        }
+
+        // Calculate IEG
+        function calculateIEG() {
+            const heightInput = document.getElementById('height');
+            const weightInput = document.getElementById('weight');
+            const errorMessage = document.getElementById('error-message');
+            const resultContainer = document.getElementById('result-container');
+            const resultValue = document.getElementById('result-value');
+            const categoryEmoji = document.getElementById('category-emoji');
+            const categoryName = document.getElementById('category-name');
+            const suggestion = document.getElementById('suggestion');
+
+            // Clear previous error
+            errorMessage.textContent = '';
+            heightInput.style.borderColor = '#C87A3E';
+            weightInput.style.borderColor = '#C87A3E';
+
+            const height = parseFloat(heightInput.value);
+            const weight = parseFloat(weightInput.value);
+
+            // Validate inputs
+            if (!height || !weight || 
+                height < 50 || height > 280 || 
+                weight < 5 || weight > 500) {
+                
+                errorMessage.textContent = 'Digite altura e peso válidos (ex: 170 cm, 70 kg)';
+                heightInput.style.borderColor = '#D9534F';
+                weightInput.style.borderColor = '#D9534F';
+                resultContainer.style.display = 'none';
+                return;
+            }
+
+            // Calculate IEG
+            const heightInMeters = height / 100;
+            const ieg = weight / (heightInMeters * heightInMeters);
+            
+            // Update result display
+            resultValue.textContent = ieg.toFixed(1);
+            
+            // Determine category
+            let categoryData = {};
+            if (ieg < 18.5) {
+                categoryData = {
+                    emoji: '🍗',
+                    name: 'Frango de padaria – só o osso',
+                    suggestion: 'Bora pedir um empadão duplo? Aproveita que ossada não empata.'
+                };
+            } else if (ieg >= 18.5 && ieg < 25) {
+                categoryData = {
+                    emoji: '🧀🥤',
+                    name: 'Empadão raiz – duas fatias e um guaraná',
+                    suggestion: 'Continue assim! Divida uma fatia com um amigo (capital da amizade ❤️).'
+                };
+            } else if (ieg >= 25 && ieg < 30) {
+                categoryData = {
+                    emoji: '🤠',
+                    name: 'Peão de rodeio – cinto no último furo',
+                    suggestion: 'Troque o refrigerante por água de coco. Seu cinto agradece.'
+                };
+            } else if (ieg >= 30 && ieg < 35) {
+                categoryData = {
+                    emoji: '🥟',
+                    name: 'Pastel de feira – estufou a camisa',
+                    suggestion: 'Que tal um pastel assado em vez de frito? Sua camisa vai folgar.'
+                };
+            } else if (ieg >= 35 && ieg < 40) {
+                categoryData = {
+                    emoji: '🚗⛰️',
+                    name: 'Morro do Cruzeiro de carro – nem tenta subir andando',
+                    suggestion: 'Comece caminhando 10 min por dia. Em três semanas você sobe até o cruzeiro.'
+                };
+            } else {
+                categoryData = {
+                    emoji: '👖🛍️',
+                    name: 'Chegou no Iondas comprar calça GG',
+                    suggestion: 'Consulte um nutricionista. E peça o Empadão Leve (já temos no cardápio!).'
+                };
+            }
+
+            // Update category display
+            categoryEmoji.textContent = categoryData.emoji;
+            categoryName.textContent = categoryData.name;
+            suggestion.textContent = categoryData.suggestion;
+
+            // Show result container
+            resultContainer.style.display = 'block';
+
+            // Save values
+            saveValues();
+        }
+
+        // Show gift alert
+        function showGift() {
+            alert('Brinde só na Lanchonete da Val. Endereço: Avenida Ayrton, R. PB 15, N° 527, Sala 1 - Parque Brasilia 2A Etapa, Anápolis - GO, 75093-700. Apresente este resultado no nosso balcão 😉');
+        }
+
+        // Add event listeners for real-time calculation
+        document.getElementById('height').addEventListener('input', calculateIEG);
+        document.getElementById('weight').addEventListener('input', calculateIEG);
+
+        // Load saved values on page load
+        window.addEventListener('load', loadSavedValues);
+
+        // Initial calculation if values exist
+        window.addEventListener('load', function() {
+            setTimeout(calculateIEG, 100); // Small delay to ensure values are loaded
+        });
+    </script>
+</body>
+</html>
